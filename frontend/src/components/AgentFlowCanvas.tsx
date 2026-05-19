@@ -221,7 +221,7 @@ export function AgentFlowCanvas({
                 x1="50"
                 y1={y}
                 x2="50"
-                y2={y + 8}
+                y2={y + 5}
                 stroke={
                   eventCount > i
                     ? "rgba(61,191,160,0.72)"

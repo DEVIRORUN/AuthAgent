@@ -402,7 +402,7 @@ export default function Home() {
         </div>
 
         {/* Live workspace */}
-        <div className="grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 px-6 py-5 auto-rows-max h-screen">
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 px-6 py-5 auto-rows-fr">
           <section className="flex h-full min-h-0 flex-col rounded-xl border border-white/[0.07] bg-ink-2 shadow-[0_18px_70px_rgba(0,0,0,0.22)] overflow-hidden">
             <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3 flex-shrink-0">
               <div
@@ -516,11 +516,9 @@ export default function Home() {
               {/* ReAct blocks */}
               {events.map((ev, i) => {
                 const eventKey = `${i}-${ev.type}-${ev.agent}-${ev.title.replace(/\s+/g, "_")}`;
-                return (
-                  ev.type !== "output" && (
-                    <ReActBlock key={eventKey} event={ev} index={i} />
-                  )
-                );
+                return ev.type !== "output" ? (
+                  <ReActBlock key={eventKey} event={ev} index={i} />
+                ) : null;
               })}
 
               {/* Typing indicator */}
