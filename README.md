@@ -131,4 +131,4 @@ authagent/
     └── vercel.json
 ```
 By Abdulmalik Ahmed for AI Olympics Hackathon
-Email: irorun757@gmail.com
+Email: irorun757@gmail.com 
