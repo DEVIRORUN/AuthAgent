@@ -130,3 +130,5 @@ authagent/
     ├── tailwind.config.ts
     └── vercel.json
 ```
+By Abdulmalik Ahmed for AI Olympics Hackathon
+Email: irorun757@gmail.com
