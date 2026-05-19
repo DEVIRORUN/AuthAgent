@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle, Copy, Check, AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, Check, CheckCircle, CircleDashed, Copy, RefreshCw, XCircle } from "lucide-react";
 import { OutputPayload } from "@/lib/types";
 
 interface Props {
@@ -26,15 +26,15 @@ export function OutputCard({ payload, onNewCase }: Props) {
   };
 
   const statusIcon = (status: string) => {
-    if (status === "confirmed") return <span className="text-emerald text-[13px]">✓</span>;
-    if (status === "missing")   return <span className="text-crimson text-[13px]">✕</span>;
-    return <span className="text-amber text-[13px]">◐</span>;
+    if (status === "confirmed") return <CheckCircle size={15} className="text-emerald" />;
+    if (status === "missing") return <XCircle size={15} className="text-crimson" />;
+    return <CircleDashed size={15} className="text-amber" />;
   };
 
   const statusBg = (status: string) => {
-    if (status === "confirmed") return "bg-emerald/5 border-emerald/15";
-    if (status === "missing")   return "bg-crimson/5 border-crimson/15";
-    return "bg-amber/5 border-amber/15";
+    if (status === "confirmed") return "bg-emerald/10 border-emerald/20";
+    if (status === "missing") return "bg-crimson/10 border-crimson/20";
+    return "bg-amber/10 border-amber/20";
   };
 
   const tabs = [
@@ -44,29 +44,23 @@ export function OutputCard({ payload, onNewCase }: Props) {
   ];
 
   return (
-    <div className="block-animate border border-jade rounded-xl overflow-hidden bg-ink-2"
-         style={{ boxShadow: "0 0 40px rgba(61,191,160,0.06)" }}>
-
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-jade/15"
-           style={{ background: "rgba(61,191,160,0.06)" }}>
-        <div className="w-6 h-6 rounded-full bg-jade flex items-center justify-center flex-shrink-0">
-          <CheckCircle size={13} className="text-white" />
+    <div className="block-animate overflow-hidden rounded-xl border border-jade/50 bg-ink-3 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
+      <div className="flex flex-wrap items-center gap-3 border-b border-jade/20 bg-jade/10 px-4 py-3">
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-jade">
+          <CheckCircle size={15} className="text-white" />
         </div>
-        <span className="text-[13px] font-semibold text-jade flex-1">
-          {mode === "review_denial" ? "Appeal ready for review" : "Submission package complete"} — {domain}
+        <span className="min-w-[220px] flex-1 text-[14px] font-semibold text-snow">
+          {mode === "review_denial" ? "Appeal ready for review" : "Submission package complete"} - {domain}
         </span>
 
-        {/* Confidence */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono text-ghost">Confidence</span>
-          <span className="text-[15px] font-mono font-medium text-jade">{confidence_score}%</span>
+        <div className="flex items-center gap-2 rounded-lg border border-jade/20 bg-black/15 px-3 py-1.5">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-fog">Confidence</span>
+          <span className="text-[16px] font-mono font-semibold text-jade">{confidence_score}%</span>
         </div>
       </div>
 
-      {/* Confidence bar */}
-      <div className="px-4 pt-3 pb-0">
-        <div className="h-[3px] rounded-full bg-ink-4 overflow-hidden">
+      <div className="px-4 pt-4">
+        <div className="h-1 overflow-hidden rounded-full bg-ink">
           <div
             className="h-full rounded-full fill-animate"
             style={{
@@ -76,31 +70,29 @@ export function OutputCard({ payload, onNewCase }: Props) {
           />
         </div>
 
-        {/* Summary stats */}
         {summary.total_criteria && (
-          <div className="flex gap-4 mt-3 mb-2">
-            <span className="text-[11px] font-mono text-emerald">✓ {summary.confirmed} confirmed</span>
-            <span className="text-[11px] font-mono text-amber">◐ {summary.partial} partial</span>
-            <span className="text-[11px] font-mono text-crimson">✕ {summary.missing} missing</span>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="rounded-md border border-emerald/20 bg-emerald/10 px-2 py-1 text-[11px] font-mono text-emerald">{summary.confirmed} confirmed</span>
+            <span className="rounded-md border border-amber/20 bg-amber/10 px-2 py-1 text-[11px] font-mono text-amber">{summary.partial} partial</span>
+            <span className="rounded-md border border-crimson/20 bg-crimson/10 px-2 py-1 text-[11px] font-mono text-crimson">{summary.missing} missing</span>
             {summary.blocking_gaps > 0 && (
-              <span className="text-[11px] font-mono text-crimson ml-auto">
-                ⚠ {summary.blocking_gaps} blocking
+              <span className="ml-auto rounded-md border border-crimson/20 bg-crimson/10 px-2 py-1 text-[11px] font-mono text-crimson">
+                {summary.blocking_gaps} blocking
               </span>
             )}
           </div>
         )}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-0 border-b border-white/[0.06] mt-2">
+      <div className="mt-4 flex border-b border-white/[0.08]">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-[12px] font-medium transition-all border-b-2 ${
+            className={`border-b-2 px-4 py-2.5 text-[12px] font-semibold transition-all ${
               activeTab === tab.id
-                ? "text-snow border-violet"
-                : "text-ghost border-transparent hover:text-fog"
+                ? "border-violet text-snow"
+                : "border-transparent text-ghost hover:text-fog"
             }`}
           >
             {tab.label}
@@ -108,86 +100,80 @@ export function OutputCard({ payload, onNewCase }: Props) {
         ))}
       </div>
 
-      {/* Tab content */}
       <div className="p-4">
-
-        {/* AUDIT TAB */}
         {activeTab === "audit" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {evidenceAudit.length > 0 ? evidenceAudit.map((item, i) => (
-              <div key={i} className={`flex items-start gap-2 p-3 rounded-lg border ${statusBg(item.status)}`}>
+              <div key={i} className={`flex items-start gap-3 rounded-lg border p-3 ${statusBg(item.status)}`}>
                 <span className="mt-0.5 flex-shrink-0">{statusIcon(item.status)}</span>
-                <div>
-                  <div className="text-[12px] font-medium text-snow mb-0.5">
-                    <span className="text-ghost font-mono text-[10px] mr-1">{item.criterion_id}</span>
-                    {(item.criterion || "").slice(0, 55)}{(item.criterion || "").length > 55 ? "…" : ""}
+                <div className="min-w-0">
+                  <div className="text-[12px] font-semibold text-snow">
+                    <span className="mr-1 font-mono text-[10px] text-ghost">{item.criterion_id}</span>
+                    {(item.criterion || "").slice(0, 75)}{(item.criterion || "").length > 75 ? "..." : ""}
                   </div>
                   {item.evidence_found && (
-                    <div className="text-[11px] text-fog mt-1 leading-snug">{item.evidence_found.slice(0,100)}</div>
+                    <div className="mt-1 text-[11px] leading-snug text-snow/75">{item.evidence_found.slice(0, 130)}</div>
                   )}
                 </div>
               </div>
             )) : (
-              <p className="text-fog text-[13px] col-span-2">Audit data loading — expand the Observation blocks above for details.</p>
+              <p className="col-span-2 text-[13px] text-fog">Audit data is still streaming. Expand the observation blocks above for live details.</p>
             )}
           </div>
         )}
 
-        {/* LETTER TAB */}
         {activeTab === "letter" && (
           <div>
             {draft?.subject_line && (
-              <div className="text-[11px] font-mono text-ghost mb-2">Re: {draft.subject_line}</div>
+              <div className="mb-2 text-[11px] font-mono text-ghost">Re: {draft.subject_line}</div>
             )}
-            <div className="bg-ink-3 border border-white/[0.06] rounded-lg p-4 text-[13px] text-snow leading-[1.85] whitespace-pre-wrap font-sans max-h-72 overflow-y-auto">
-              {draft?.letter_body || "Draft not available — check agent output above."}
+            <div className="max-h-[420px] overflow-y-auto rounded-lg border border-white/[0.09] bg-ink p-4 font-sans text-[14px] leading-[1.85] text-snow whitespace-pre-wrap">
+              {draft?.letter_body || "Draft not available. Check the agent output above."}
             </div>
             <button
               onClick={copyLetter}
-              className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-[12px] text-fog hover:text-snow hover:border-white/20 transition-all"
+              className="mt-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-fog transition-all hover:border-white/20 hover:text-snow"
             >
               {copied ? <Check size={13} className="text-jade" /> : <Copy size={13} />}
-              {copied ? "Copied!" : "Copy letter"}
+              {copied ? "Copied" : "Copy letter"}
             </button>
           </div>
         )}
 
-        {/* GAPS TAB */}
         {activeTab === "gaps" && (
           <div className="space-y-2">
             {gaps.length === 0 && flags.length === 0 && (
-              <p className="text-fog text-[13px]">No critical gaps found. Review the letter before sending.</p>
+              <p className="text-[13px] text-fog">No critical gaps found. Review the letter before sending.</p>
             )}
             {gaps.map((g, i) => (
-              <div key={i} className="flex items-start gap-2 p-3 bg-crimson/5 border border-crimson/15 rounded-lg">
-                <span className="text-[9px] font-mono font-medium bg-crimson/20 text-crimson px-1.5 py-0.5 rounded mt-0.5 flex-shrink-0 uppercase">
+              <div key={i} className="flex items-start gap-3 rounded-lg border border-crimson/20 bg-crimson/10 p-3">
+                <span className="mt-0.5 flex-shrink-0 rounded bg-crimson/20 px-1.5 py-0.5 text-[9px] font-mono font-semibold uppercase text-crimson">
                   {g.severity}
                 </span>
                 <div>
-                  <div className="text-[12px] text-fog">{g.gap}</div>
-                  {g.fix && <div className="text-[12px] text-snow mt-1 font-medium">→ {g.fix}</div>}
+                  <div className="text-[12px] text-snow/80">{g.gap}</div>
+                  {g.fix && <div className="mt-1 text-[12px] font-semibold text-snow">{g.fix}</div>}
                 </div>
               </div>
             ))}
             {flags.map((f, i) => (
-              <div key={`flag-${i}`} className="flex items-start gap-2 p-3 bg-amber/5 border border-amber/15 rounded-lg">
-                <AlertTriangle size={13} className="text-amber mt-0.5 flex-shrink-0" />
-                <span className="text-[12px] text-fog">{f}</span>
+              <div key={`flag-${i}`} className="flex items-start gap-2 rounded-lg border border-amber/20 bg-amber/10 p-3">
+                <AlertTriangle size={13} className="mt-0.5 flex-shrink-0 text-amber" />
+                <span className="text-[12px] text-snow/80">{f}</span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center gap-3 px-4 py-3 border-t border-white/[0.06]">
-        <span className="flex items-center gap-2 text-[11px] font-mono text-amber ml-auto">
+      <div className="flex flex-wrap items-center gap-3 border-t border-white/[0.08] px-4 py-3">
+        <span className="flex items-center gap-2 text-[11px] font-mono text-amber">
           <AlertTriangle size={11} />
           Expert review required before sending
         </span>
         <button
           onClick={onNewCase}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-[12px] text-ghost hover:text-fog transition-colors"
+          className="ml-auto flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[12px] text-ghost transition-colors hover:text-fog"
         >
           <RefreshCw size={11} />
           New case

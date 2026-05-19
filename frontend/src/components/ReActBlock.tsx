@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CircleDot } from "lucide-react";
 import { AgentEvent } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -34,16 +34,18 @@ export function ReActBlock({ event, index }: Props) {
 
   return (
     <div className={cn(
-      "block-animate border border-white/[0.06] rounded-xl overflow-hidden bg-ink-2",
-      "transition-all duration-200"
+      "block-animate overflow-hidden rounded-xl border border-white/[0.09] bg-ink-3",
+      "shadow-[0_10px_30px_rgba(0,0,0,0.18)] transition-all duration-200"
     )}>
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-ink-3 transition-colors"
+        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-ink-4 transition-colors"
         style={{ borderBottom: collapsed ? "none" : "1px solid rgba(255,255,255,0.06)" }}
       >
+        <CircleDot size={13} className="text-fog flex-shrink-0" />
+
         {/* Type tag */}
-        <span className={cn("text-[9px] font-mono font-medium tracking-widest uppercase px-2 py-0.5 rounded flex-shrink-0", tag.classes)}>
+        <span className={cn("text-[10px] font-mono font-medium tracking-widest uppercase px-2.5 py-1 rounded-md flex-shrink-0", tag.classes)}>
           {tag.label}
         </span>
 
@@ -53,7 +55,7 @@ export function ReActBlock({ event, index }: Props) {
         </span>
 
         {/* Title */}
-        <span className="text-[13px] font-medium text-snow flex-1 truncate">
+        <span className="text-[14px] font-semibold text-snow flex-1 truncate">
           {event.title}
         </span>
 
@@ -71,7 +73,7 @@ export function ReActBlock({ event, index }: Props) {
 
       {!collapsed && (
         <div
-          className="px-4 py-3 text-[13px] text-fog leading-relaxed"
+          className="px-4 py-4 text-[13px] text-snow/85 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: formatContent(event.content) }}
         />
       )}

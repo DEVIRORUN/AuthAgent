@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ReActBlock } from "@/components/ReActBlock";
 import { OutputCard } from "@/components/OutputCard";
 import { TypingIndicator } from "@/components/TypingIndicator";
+import { AgentFlowCanvas } from "@/components/AgentFlowCanvas";
 import { AgentEvent, Domain, Mode, OutputPayload, Scenario } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,8 @@ const TYPING_LABELS: Record<string, string> = {
   synthesis: "Synthesising...",
   output: "Generating output...",
 };
+
+type StreamEvent = AgentEvent | { type: "done" };
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>("review_denial");
@@ -125,7 +128,7 @@ export default function Home() {
           if (!raw) continue;
 
           try {
-            const event = JSON.parse(raw) as AgentEvent & { type: string };
+            const event = JSON.parse(raw) as StreamEvent;
 
             if (event.type === "done") {
               setTypingLabel(null);
@@ -145,7 +148,7 @@ export default function Home() {
               } catch {
                 // Output parsing failed — still show the block
               }
-              setEvents(prev => [...prev, event as AgentEvent]);
+              setEvents(prev => [...prev, event]);
               scrollToBottom();
               continue;
             }
@@ -155,7 +158,7 @@ export default function Home() {
             await new Promise(r => setTimeout(r, 200));
             setTypingLabel(null);
 
-            setEvents(prev => [...prev, event as AgentEvent]);
+            setEvents(prev => [...prev, event]);
             scrollToBottom();
 
           } catch {
@@ -328,8 +331,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Stream panel */}
-        <div ref={streamRef} className="flex-1 overflow-y-auto px-8 py-5 flex flex-col gap-2">
+        {/* Live workspace */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-hidden px-6 py-5 xl:grid-cols-[minmax(0,1fr)_410px]">
+          <section className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/[0.07] bg-ink-2 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+            <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3">
+              <div className={cn("h-2 w-2 rounded-full", isRunning ? "bg-violet animate-pulse" : output ? "bg-jade" : "bg-ghost")} />
+              <div>
+                <div className="text-[13px] font-semibold text-snow">Realtime ReAct Stream</div>
+                <div className="text-[10px] font-mono text-ghost">SSE data from FastAPI, rendered as each event arrives</div>
+              </div>
+              <div className="ml-auto text-[10px] font-mono text-fog">
+                {events.length} events
+              </div>
+            </div>
+
+            <div ref={streamRef} className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
 
           {/* Error */}
           {error && (
@@ -399,6 +415,10 @@ export default function Home() {
             <OutputCard payload={output} onNewCase={clearAll} />
           )}
 
+            </div>
+          </section>
+
+          <AgentFlowCanvas events={events} isRunning={isRunning} output={output} />
         </div>
       </main>
     </div>
