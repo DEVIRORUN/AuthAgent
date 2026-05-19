@@ -514,12 +514,14 @@ export default function Home() {
               )}
 
               {/* ReAct blocks */}
-              {events.map(
-                (ev, i) =>
+              {events.map((ev, i) => {
+                const eventKey = `${i}-${ev.type}-${ev.agent}-${ev.title.replace(/\s+/g, "_")}`;
+                return (
                   ev.type !== "output" && (
-                    <ReActBlock key={i} event={ev} index={i} />
-                  ),
-              )}
+                    <ReActBlock key={eventKey} event={ev} index={i} />
+                  )
+                );
+              })}
 
               {/* Typing indicator */}
               {typingLabel && <TypingIndicator label={typingLabel} />}
